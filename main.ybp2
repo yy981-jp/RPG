@@ -1,0 +1,5 @@
+main
+null
+-lSDL2 -lSDL2_image
+null
+null

@@ -1,0 +1,22 @@
+{
+	"1": {
+		"color": "#000000",
+		"sheet": "test.png",
+		"index": [0,0]
+	},
+	"2": {
+		"color": "#FFFFFF",
+		"sheet": "test.png",
+		"index": [0,1]
+	},
+	"3": {
+		"color": "#00FF80",
+		"sheet": "test.png",
+		"index": [1,0]
+	},
+	"4": {
+		"color": "#00FEFE",
+		"sheet": "test.png",
+		"index": [1,1]
+	}
+}
