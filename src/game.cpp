@@ -1,26 +1,8 @@
-#define SDL_MAIN_HANDLED
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include <iostream>
-#include <vector>
-#include <string>
-
-#include <yy981/dll.h>
-
-constexpr int TILE_SIZE = 32;
-constexpr int MAP_WIDTH = 20;
-constexpr int MAP_HEIGHT = 15;
-constexpr int WIN_WIDTH = 640;
-constexpr int WIN_HEIGHT = 480;
-
-#include "inc/callTile.h"
+#include "game.h"
 #include "IMGtoCSV.h"
 
-class Game {
-public:
-	Game() : window(nullptr), renderer(nullptr), running(false), tileManager(nullptr) {}
 
-	bool init(const char* title, int width, int height) {
+    bool Game::init(const char* title, int width, int height) {
 		if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) {
 			std::cerr << "SDL_Init Error: " << SDL_GetError() << std::endl;
 			return false;
@@ -47,7 +29,7 @@ public:
 
 		// タイルマネージャ初期化（tileinfo.jsonを読み込む）
 		try {
-			tileManager = new TileManager(renderer, "src/link/ID.json");
+			tileManager = new TileManager(renderer, "assets/link/ID.json");
 		} catch (const std::exception& e) {
 			std::cerr << "TileManager Error: " << e.what() << std::endl;
 			return false;
@@ -61,7 +43,8 @@ public:
 		return true;
 	}
 
-	void run() {
+
+	void Game::run() {
 		while (running) {
 			handleEvents();
 			update();
@@ -70,23 +53,16 @@ public:
 		}
 	}
 
-	void cleanup() {
-		if (tileManager) delete tileManager;
+
+	void Game::cleanup() {
+    	if (tileManager) delete tileManager;
 		if (renderer) SDL_DestroyRenderer(renderer);
 		if (window) SDL_DestroyWindow(window);
 		IMG_Quit();
 		SDL_Quit();
 	}
 
-private:
-	SDL_Window* window;
-	SDL_Renderer* renderer;
-	bool running;
-	TileManager* tileManager;
-
-	std::vector<std::vector<int>> map;
-
-	void handleEvents() {
+	void Game::handleEvents() {
 		SDL_Event e;
 		while (SDL_PollEvent(&e)) {
 			if (e.type == SDL_QUIT) {
@@ -95,22 +71,18 @@ private:
 		}
 	}
 
-	void update() {
-		// 今は何もしない
-	}
-
-	void render() {
+	void Game::render() {
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 		SDL_RenderClear(renderer);
 
-		for (int y = 0; y < MAP_HEIGHT; ++y) {
-			for (int x = 0; x < MAP_WIDTH; ++x) {
+		for (int y = 0; y < cst::mapHeight; ++y) {
+			for (int x = 0; x < cst::mapWidth; ++x) {
 				const int tileID = map[y][x];
 				const TileInfo& tile = tileManager->getTile(tileID);
 
 				SDL_Rect dstRect = {
-					x * TILE_SIZE,
-					y * TILE_SIZE,
+					x * cst::tileSize,
+					y * cst::tileSize,
 					tile.rect.w,
 					tile.rect.h
 				};
@@ -121,13 +93,3 @@ private:
 
 		SDL_RenderPresent(renderer);
 	}
-};
-
-int main(int argc, char* argv[]) {
-	Game game;
-	if (game.init("Map Test", WIN_WIDTH, WIN_HEIGHT)) {
-		game.run();
-		game.cleanup();
-	}
-	return 0;
-}

@@ -43,16 +43,16 @@ private:
 		ifs >> j;
 
 		for (auto& [tileID, entry] : j.items()) {
-			std::string sheetPath = "src/tiles/" + std::string(entry["sheet"]);
+			std::string sheetPath = "assets/tiles/" + std::string(entry["sheet"]);
 			std::vector<int> index = entry["index"];
 			std::vector<int> size = entry.value("size", std::vector<int>{1,1});
 
 			SDL_Texture* tex = loadTexture(sheetPath);
 			SDL_Rect srcRect = {
-				index[0] * TILE_SIZE,
-				index[1] * TILE_SIZE,
-				size[0] * TILE_SIZE,
-				size[1] * TILE_SIZE
+				index[0] * cst::tileSize,
+				index[1] * cst::tileSize,
+				size[0] * cst::tileSize,
+				size[1] * cst::tileSize
 			};
 
 			tileMap[std::stoi(tileID)] = TileInfo{ tex, srcRect };

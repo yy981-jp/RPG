@@ -1,9 +1,9 @@
+#include "IMGtoCSV.h"
+
 #define SDL_MAIN_HANDLED
 #include <iostream>
 #include <fstream>
 #include <unordered_map>
-#include <string>
-#include <vector>
 #include <stdexcept>
 #include <sstream>
 #include <iomanip>
@@ -11,13 +11,8 @@
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <_/stb_image.h>
-#include <nlohmann/json.hpp>
 
-#define BUILD
-#include <yy981/dll.h>
-
-using json = nlohmann::json;
-namespace fs = std::filesystem;
+#include "def.h"
 
 // HEX文字列に変換 (#RRGGBB)
 std::string to_hex(int r, int g, int b) {
@@ -31,8 +26,8 @@ std::string to_hex(int r, int g, int b) {
 
 
 std::vector<std::vector<int>> IMGtoCSV(std::string json_path, std::string image_path) {
-	image_path = "src/map/" + image_path + ".png";
-	json_path = "src/link/" + json_path + ".json";
+	image_path = "assets/map/" + image_path + ".png";
+	json_path = "assets/link/" + json_path + ".json";
 	// JSON読み込み
 	std::ifstream ifs(json_path);
 	if (!ifs) {
@@ -69,7 +64,7 @@ std::vector<std::vector<int>> IMGtoCSV(std::string json_path, std::string image_
 			int b = data[idx + 2];
 			std::string hex = to_hex(r, g, b);
 
-			if (color_to_id.contains(hex)) {
+			if (color_to_id.find(hex) != color_to_id.end()) {
 				result[y].emplace_back(color_to_id[hex]);
 			} else throw std::runtime_error("IDリストに登録されていない色が変換元画像に使用されています HEX:" + hex);
 			// if (x < w - 1) ofs << ",";
